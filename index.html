@@ -1,0 +1,749 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAME ZONE | Mini Games</title>
+<style>
+:root {
+  --bg:#080d19;
+  --panel:#111b2d;
+  --panel2:#19253a;
+  --text:#f4f7ff;
+  --muted:#94a3b8;
+  --blue:#6366f1;
+  --cyan:#06b6d4;
+  --green:#22c55e;
+  --red:#f43f5e;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at top,#192b4a 0%,#080d19 65%);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+  min-height:100vh;
+}
+button,select{font:inherit}
+button{cursor:pointer}
+header{
+  padding:20px 6%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  border-bottom:1px solid #ffffff12;
+  background:#080d19c9;
+  position:sticky;top:0;z-index:5;
+  backdrop-filter:blur(15px);
+}
+.logo{
+  font-size:25px;font-weight:900;letter-spacing:1px;
+}
+.logo span{color:#818cf8}
+.header-right{display:flex;gap:10px;align-items:center}
+select,.secondary{
+  background:var(--panel2);
+  color:white;border:1px solid #ffffff20;
+  border-radius:10px;padding:10px 13px;
+}
+.container{width:min(1100px,92%);margin:auto}
+.hero{text-align:center;padding:65px 10px 35px}
+.hero h1{
+  font-size:clamp(35px,7vw,65px);
+  font-weight:900;
+  background:linear-gradient(90deg,#818cf8,#22d3ee,#a78bfa);
+  -webkit-background-clip:text;color:transparent;
+}
+.hero p{color:var(--muted);margin-top:14px;font-size:16px}
+.section-title{margin:35px 0 18px;font-size:23px}
+.games{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:18px;
+}
+.game-card{
+ background:linear-gradient(145deg,#17243b,#101829);
+ border:1px solid #ffffff15;
+ border-radius:20px;padding:25px 20px;
+ transition:.25s;cursor:pointer;
+}
+.game-card:hover{
+ transform:translateY(-7px);
+ border-color:#818cf8;
+ box-shadow:0 15px 40px #6366f125;
+}
+.game-icon{font-size:50px;margin-bottom:17px}
+.game-card h3{font-size:21px;margin-bottom:9px}
+.game-card p{color:var(--muted);font-size:14px;line-height:1.6}
+.play-btn,.main-btn{
+ border:0;border-radius:11px;
+ padding:12px 20px;color:white;font-weight:700;
+ background:linear-gradient(90deg,#6366f1,#06b6d4);
+ margin-top:18px;width:100%;
+ transition:.2s;
+}
+.play-btn:hover,.main-btn:hover{filter:brightness(1.15)}
+#game-screen{display:none;padding:30px 0 60px}
+.game-header{
+ display:flex;justify-content:space-between;
+ align-items:center;gap:12px;flex-wrap:wrap;
+ margin-bottom:22px;
+}
+.game-header h2{font-size:26px}
+.game-panel{
+ background:#111b2d;border:1px solid #ffffff14;
+ border-radius:20px;padding:22px;
+ width:min(620px,100%);margin:auto;
+}
+.settings{
+ display:flex;justify-content:center;
+ flex-wrap:wrap;gap:10px;margin-bottom:20px;
+}
+.settings select{min-width:125px}
+.status{
+ text-align:center;font-size:18px;font-weight:700;
+ padding:15px;border-radius:12px;
+ background:#ffffff08;margin-bottom:20px;
+}
+.score{
+ display:flex;justify-content:center;gap:35px;
+ margin:15px 0 22px;text-align:center;
+}
+.score strong{font-size:27px;display:block;color:#a5b4fc}
+.score span{font-size:12px;color:var(--muted)}
+.ttt-board{
+ display:grid;grid-template-columns:repeat(3,1fr);
+ gap:9px;width:min(340px,100%);margin:auto;
+}
+.ttt-cell{
+ aspect-ratio:1;border:1px solid #ffffff15;
+ border-radius:15px;background:#1b2941;
+ font-size:clamp(40px,9vw,65px);font-weight:900;
+ color:white;transition:.15s;
+}
+.ttt-cell:hover{background:#293d60}
+.ttt-cell.x{color:#818cf8}
+.ttt-cell.o{color:#22d3ee}
+.checker-board{
+ display:grid;grid-template-columns:repeat(8,1fr);
+ width:min(440px,100%);aspect-ratio:1;
+ margin:auto;border:5px solid #293852;
+ border-radius:7px;overflow:hidden;
+}
+.square{
+ display:flex;align-items:center;justify-content:center;
+ position:relative;min-width:0;aspect-ratio:1;
+}
+.light{background:#e6d5b5}
+.dark{background:#805b48;cursor:pointer}
+.piece{
+ width:76%;height:76%;border-radius:50%;
+ border:4px solid #ffffff80;
+ box-shadow:inset 0 -5px 0 #0005,0 3px 5px #0006;
+ display:flex;align-items:center;justify-content:center;
+ font-size:clamp(12px,3vw,20px);
+}
+.piece.red{background:#e84455}
+.piece.black{background:#222a38}
+.piece.king:after{content:"♛";color:#ffd166}
+.selected{outline:4px solid #facc15;outline-offset:-4px}
+.possible:before{
+ content:"";width:25%;height:25%;
+ border-radius:50%;background:#22c55e;
+ position:absolute;
+}
+.rps-options{
+ display:flex;justify-content:center;
+ flex-wrap:wrap;gap:15px;margin:25px 0;
+}
+.rps-choice{
+ width:105px;height:105px;border-radius:20px;
+ background:#1b2941;border:2px solid #ffffff20;
+ color:white;font-size:43px;transition:.2s;
+}
+.rps-choice:hover{transform:scale(1.08);border-color:#818cf8}
+.rps-result{
+ display:grid;grid-template-columns:1fr 1fr;
+ gap:15px;text-align:center;margin:20px 0;
+}
+.rps-result div{
+ background:#1b2941;border-radius:15px;padding:20px;
+}
+.rps-result strong{font-size:40px;display:block;margin:10px}
+.bottom-actions{display:flex;gap:10px;margin-top:22px}
+.bottom-actions button{flex:1}
+.hidden{display:none!important}
+footer{
+ text-align:center;color:var(--muted);
+ padding:30px 10px;border-top:1px solid #ffffff10;
+ font-size:13px;
+}
+@media(max-width:750px){
+ .games{grid-template-columns:1fr}
+ .hero{padding-top:45px}
+ .game-panel{padding:14px}
+ header{padding:15px 4%}
+ .logo{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">🎮 GAME<span>ZONE</span></div>
+ <div class="header-right">
+  <select id="language" onchange="setLanguage(this.value)">
+   <option value="uz">🇺🇿 O‘zbekcha</option>
+   <option value="en">🇬🇧 English</option>
+   <option value="ru">🇷🇺 Русский</option>
+  </select>
+ </div>
+</header>
+
+<main class="container">
+ <section id="home">
+  <div class="hero">
+   <h1>GAME ZONE</h1>
+   <p data-t="subtitle">Uchta qiziqarli o‘yin. Bitta platforma. Cheksiz zavq!</p>
+  </div>
+
+  <h2 class="section-title" data-t="choose">🎯 O‘yinni tanlang</h2>
+
+  <div class="games">
+   <div class="game-card" onclick="openGame('ttt')">
+    <div class="game-icon">⭕</div>
+    <h3>Tic Tac Toe</h3>
+    <p data-t="tttdesc">X va O. Do‘sting yoki aqlli bot bilan o‘yna.</p>
+    <button class="play-btn" data-t="play">O‘ynash →</button>
+   </div>
+
+   <div class="game-card" onclick="openGame('checkers')">
+    <div class="game-icon">♟️</div>
+    <h3 data-t="checkers">Shashka</h3>
+    <p data-t="checkdesc">Strategiya, yurishlar va raqib donalarini urish.</p>
+    <button class="play-btn" data-t="play">O‘ynash →</button>
+   </div>
+
+   <div class="game-card" onclick="openGame('rps')">
+    <div class="game-icon">✊</div>
+    <h3 data-t="rps">Su-le-fa</h3>
+    <p data-t="rpsdesc">Tosh, qaychi va qog‘oz. Faqat bot bilan.</p>
+    <button class="play-btn" data-t="play">O‘ynash →</button>
+   </div>
+  </div>
+ </section>
+
+ <section id="game-screen">
+  <div class="game-header">
+   <h2 id="game-title">Game</h2>
+   <button class="secondary" onclick="goHome()" data-t="back">← Bosh sahifa</button>
+  </div>
+
+  <!-- TIC TAC TOE -->
+  <div id="ttt-panel" class="game-panel hidden">
+   <div class="settings">
+    <select id="ttt-mode" onchange="resetTTT()">
+     <option value="bot" data-t="bot">🤖 Bot</option>
+     <option value="human" data-t="human">👥 2 kishi</option>
+    </select>
+    <select id="ttt-level" onchange="resetTTT()">
+     <option value="easy" data-t="easy">Easy</option>
+     <option value="normal" data-t="normal">Normal</option>
+     <option value="hard" data-t="hard">Hard</option>
+    </select>
+   </div>
+   <div class="score">
+    <div><strong id="ttt-x-score">0</strong><span>PLAYER X</span></div>
+    <div><strong id="ttt-draw-score">0</strong><span data-t="draw">DURANG</span></div>
+    <div><strong id="ttt-o-score">0</strong><span>PLAYER O</span></div>
+   </div>
+   <div class="status" id="ttt-status">X navbati</div>
+   <div class="ttt-board" id="ttt-board"></div>
+   <button class="main-btn" onclick="resetTTT()" data-t="restart">🔄 Qayta boshlash</button>
+  </div>
+
+  <!-- CHECKERS -->
+  <div id="checkers-panel" class="game-panel hidden">
+   <div class="settings">
+    <select id="check-mode" onchange="resetCheckers()">
+     <option value="bot" data-t="bot">🤖 Bot</option>
+     <option value="human" data-t="human">👥 2 kishi</option>
+    </select>
+    <select id="check-level" onchange="resetCheckers()">
+     <option value="easy" data-t="easy">Easy</option>
+     <option value="normal" data-t="normal">Normal</option>
+     <option value="hard" data-t="hard">Hard</option>
+    </select>
+   </div>
+   <div class="status" id="check-status">Qizil navbati</div>
+   <div class="checker-board" id="checker-board"></div>
+   <div class="bottom-actions">
+    <button class="main-btn" onclick="resetCheckers()" data-t="restart">Qayta boshlash</button>
+   </div>
+   <p style="color:var(--muted);text-align:center;margin-top:15px;font-size:12px" data-t="checkhint">
+    Donani tanlang, keyin yashil nuqtali katakni bosing.
+   </p>
+  </div>
+
+  <!-- ROCK PAPER SCISSORS -->
+  <div id="rps-panel" class="game-panel hidden">
+   <div class="settings">
+    <select id="rps-level" onchange="resetRPS()">
+     <option value="easy" data-t="easy">Easy</option>
+     <option value="normal" data-t="normal">Normal</option>
+    </select>
+   </div>
+   <div class="score">
+    <div><strong id="rps-player-score">0</strong><span data-t="you">SIZ</span></div>
+    <div><strong id="rps-bot-score">0</strong><span data-t="botname">BOT</span></div>
+   </div>
+   <div class="status" id="rps-status" data-t="choosehand">Tanlovingizni qiling!</div>
+   <div class="rps-result">
+    <div><span data-t="you">Siz</span><strong id="rps-player">❔</strong></div>
+    <div><span data-t="botname">Bot</span><strong id="rps-bot">❔</strong></div>
+   </div>
+   <div class="rps-options">
+    <button class="rps-choice" onclick="playRPS('rock')">✊</button>
+    <button class="rps-choice" onclick="playRPS('paper')">✋</button>
+    <button class="rps-choice" onclick="playRPS('scissors')">✌️</button>
+   </div>
+   <button class="main-btn" onclick="resetRPS()" data-t="restart">🔄 Qayta boshlash</button>
+  </div>
+ </section>
+</main>
+
+<footer>© 2026 GAME ZONE — <span data-t="footer">Barcha huquqlar himoyalangan.</span></footer>
+
+<script>
+// ================= LANGUAGES =================
+
+const translations={
+ uz:{
+ subtitle:"Uchta qiziqarli o‘yin. Bitta platforma. Cheksiz zavq!",
+ choose:"🎯 O‘yinni tanlang",play:"O‘ynash →",
+ tttdesc:"X va O. Do‘sting yoki aqlli bot bilan o‘yna.",
+ checkers:"Shashka",checkdesc:"Strategiya, yurishlar va raqib donalarini urish.",
+ rps:"Su-le-fa",rpsdesc:"Tosh, qaychi va qog‘oz. Faqat bot bilan.",
+ back:"← Bosh sahifa",bot:"🤖 Bot",human:"👥 2 kishi",
+ easy:"Easy",normal:"Normal",hard:"Hard",
+ draw:"DURANG",restart:"🔄 Qayta boshlash",
+ checkhint:"Donani tanlang, keyin yashil nuqtali katakni bosing.",
+ you:"SIZ",botname:"BOT",choosehand:"Tanlovingizni qiling!",
+ footer:"Barcha huquqlar himoyalangan.",
+ xturn:"X navbati",oturn:"O navbati",
+ winx:"X g‘olib bo‘ldi!",wino:"O g‘olib bo‘ldi!",
+ drawmsg:"Durang!",yourturn:"Sizning navbatingiz",
+ botturn:"Bot o‘ylayapti...",redturn:"Qizil navbati",
+ blackturn:"Qora navbati",redwin:"Qizil g‘olib!",
+ blackwin:"Qora g‘olib!",win:"Siz yutdingiz!",
+ lose:"Bot yutdi!",tie:"Durang!",
+ rock:"Tosh",paper:"Qog‘oz",scissors:"Qaychi",
+ select:"Avval dona tanlang!"
+ },
+ en:{
+ subtitle:"Three exciting games. One platform. Endless fun!",
+ choose:"🎯 Choose a game",play:"Play →",
+ tttdesc:"X and O. Play with a friend or a smart bot.",
+ checkers:"Checkers",checkdesc:"Strategy, moves and capturing opponent pieces.",
+ rps:"Rock Paper Scissors",rpsdesc:"Rock, paper and scissors. Bot only.",
+ back:"← Home",bot:"🤖 Bot",human:"👥 2 Players",
+ easy:"Easy",normal:"Normal",hard:"Hard",
+ draw:"DRAW",restart:"🔄 Restart",
+ checkhint:"Select a piece, then click a green marked square.",
+ you:"YOU",botname:"BOT",choosehand:"Make your choice!",
+ footer:"All rights reserved.",
+ xturn:"X's turn",oturn:"O's turn",
+ winx:"X wins!",wino:"O wins!",
+ drawmsg:"It's a draw!",yourturn:"Your turn",
+ botturn:"Bot is thinking...",redturn:"Red's turn",
+ blackturn:"Black's turn",redwin:"Red wins!",
+ blackwin:"Black wins!",win:"You won!",
+ lose:"Bot won!",tie:"It's a draw!",
+ rock:"Rock",paper:"Paper",scissors:"Scissors",
+ select:"Select a piece first!"
+ },
+ ru:{
+ subtitle:"Три интересные игры. Одна платформа. Безграничное веселье!",
+ choose:"🎯 Выберите игру",play:"Играть →",
+ tttdesc:"Крестики-нолики. Играйте с другом или ботом.",
+ checkers:"Шашки",checkdesc:"Стратегия, ходы и взятие фигур соперника.",
+ rps:"Камень, ножницы, бумага",rpsdesc:"Только игра против бота.",
+ back:"← Главная",bot:"🤖 Бот",human:"👥 2 игрока",
+ easy:"Лёгкий",normal:"Средний",hard:"Сложный",
+ draw:"НИЧЬЯ",restart:"🔄 Заново",
+ checkhint:"Выберите шашку, затем нажмите на зелёную клетку.",
+ you:"ВЫ",botname:"БОТ",choosehand:"Сделайте свой выбор!",
+ footer:"Все права защищены.",
+ xturn:"Ход X",oturn:"Ход O",
+ winx:"Победил X!",wino:"Победил O!",
+ drawmsg:"Ничья!",yourturn:"Ваш ход",
+ botturn:"Бот думает...",redturn:"Ход красных",
+ blackturn:"Ход чёрных",redwin:"Красные победили!",
+ blackwin:"Чёрные победили!",win:"Вы победили!",
+ lose:"Бот победил!",tie:"Ничья!",
+ rock:"Камень",paper:"Бумага",scissors:"Ножницы",
+ select:"Сначала выберите шашку!"
+ }
+};
+let lang="uz";
+const tr=k=>translations[lang][k]||k;
+function setLanguage(l){
+ lang=l;
+ document.documentElement.lang=l;
+ document.querySelectorAll("[data-t]").forEach(el=>{
+  el.textContent=tr(el.dataset.t);
+ });
+ updateStatuses();
+}
+
+// ================= NAVIGATION =================
+
+let currentGame="";
+function openGame(game){
+ currentGame=game;
+ document.getElementById("home").style.display="none";
+ document.getElementById("game-screen").style.display="block";
+ ["ttt","checkers","rps"].forEach(g=>
+  document.getElementById(g+"-panel").classList.add("hidden")
+ );
+ document.getElementById(game+"-panel").classList.remove("hidden");
+ document.getElementById("game-title").textContent=
+  game==="ttt"?"⭕ Tic Tac Toe":game==="checkers"?"♟️ "+tr("checkers"):"✊ "+tr("rps");
+ if(game==="ttt")resetTTT();
+ if(game==="checkers")resetCheckers();
+ if(game==="rps")resetRPS();
+}
+function goHome(){
+ document.getElementById("home").style.display="block";
+ document.getElementById("game-screen").style.display="none";
+ currentGame="";
+}
+
+// ================= TIC TAC TOE =================
+
+let ttt=Array(9).fill("");
+let tttTurn="X",tttOver=false;
+let tttScores={X:0,O:0,D:0};
+const lines=[
+ [0,1,2],[3,4,5],[6,7,8],
+ [0,3,6],[1,4,7],[2,5,8],
+ [0,4,8],[2,4,6]
+];
+
+function resetTTT(){
+ ttt=Array(9).fill("");
+ tttTurn="X";tttOver=false;
+ renderTTT();updateTTTStatus();
+}
+function renderTTT(){
+ const board=document.getElementById("ttt-board");
+ board.innerHTML="";
+ ttt.forEach((v,i)=>{
+  let b=document.createElement("button");
+  b.className="ttt-cell "+v.toLowerCase();
+  b.textContent=v;
+  b.onclick=()=>tttMove(i);
+  board.appendChild(b);
+ });
+ document.getElementById("ttt-x-score").textContent=tttScores.X;
+ document.getElementById("ttt-o-score").textContent=tttScores.O;
+ document.getElementById("ttt-draw-score").textContent=tttScores.D;
+}
+function tttWinner(b){
+ for(const line of lines){
+  const [a,c,d]=line;
+  if(b[a]&&b[a]===b[c]&&b[a]===b[d])return b[a];
+ }
+ return b.every(Boolean)?"D":null;
+}
+function updateTTTStatus(){
+ const winner=tttWinner(ttt);
+ let msg=winner==="X"?tr("winx"):winner==="O"?tr("wino"):
+ winner==="D"?tr("drawmsg"):
+ tttTurn==="X"?tr("xturn"):
+ document.getElementById("ttt-mode").value==="bot"?
+ tr("botturn"):tr("oturn");
+ document.getElementById("ttt-status").textContent=msg;
+}
+function tttMove(i){
+ if(tttOver||ttt[i])return;
+ if(document.getElementById("ttt-mode").value==="bot"&&tttTurn==="O")return;
+ placeTTT(i);
+ if(!tttOver&&document.getElementById("ttt-mode").value==="bot"){
+  updateTTTStatus();
+  setTimeout(botTTT,350);
+ }
+}
+function placeTTT(i){
+ ttt[i]=tttTurn;
+ const w=tttWinner(ttt);
+ if(w){
+  tttOver=true;
+  if(w==="D")tttScores.D++;
+  else tttScores[w]++;
+ }else tttTurn=tttTurn==="X"?"O":"X";
+ renderTTT();updateTTTStatus();
+}
+function botTTT(){
+ if(tttOver)return;
+ let level=document.getElementById("ttt-level").value;
+ let moves=ttt.map((v,i)=>v?null:i).filter(v=>v!==null);
+ let move;
+ if(level==="easy"){
+  move=moves[Math.floor(Math.random()*moves.length)];
+ }else if(level==="normal"){
+  move=findImmediate(ttt,"O")??findImmediate(ttt,"X")??moves[Math.floor(Math.random()*moves.length)];
+ }else{
+  let best=-Infinity;
+  moves.forEach(i=>{
+   ttt[i]="O";
+   let score=minimax(ttt,0,false);
+   ttt[i]="";
+   if(score>best){best=score;move=i;}
+  });
+ }
+ if(move!==undefined)placeTTT(move);
+}
+function findImmediate(b,p){
+ for(let i=0;i<9;i++){
+  if(!b[i]){
+   b[i]=p;let w=tttWinner(b);b[i]="";
+   if(w===p)return i;
+  }
+ }
+ return null;
+}
+function minimax(b,depth,isMax){
+ const w=tttWinner(b);
+ if(w==="O")return 10-depth;
+ if(w==="X")return depth-10;
+ if(w==="D")return 0;
+ let best=isMax?-Infinity:Infinity;
+ for(let i=0;i<9;i++){
+  if(!b[i]){
+   b[i]=isMax?"O":"X";
+   let val=minimax(b,depth+1,!isMax);
+   b[i]="";
+   best=isMax?Math.max(best,val):Math.min(best,val);
+  }
+ }
+ return best;
+}
+
+// ================= CHECKERS =================
+// 8x8 board, forced captures, kings and promotion.
+
+let cb=[],cTurn="r",cSelected=null,cMoves=[],cOver=false;
+
+function resetCheckers(){
+ cb=Array.from({length:8},()=>Array(8).fill(null));
+ for(let r=0;r<3;r++)for(let c=0;c<8;c++)
+  if((r+c)%2===1)cb[r][c]={p:"b",k:false};
+ for(let r=5;r<8;r++)for(let c=0;c<8;c++)
+  if((r+c)%2===1)cb[r][c]={p:"r",k:false};
+ cTurn="r";cSelected=null;cMoves=[];cOver=false;
+ renderCheckers();updateCheckStatus();
+}
+function inside(r,c){return r>=0&&r<8&&c>=0&&c<8}
+function directions(piece){
+ if(piece.k)return [[1,1],[1,-1],[-1,1],[-1,-1]];
+ return piece.p==="r"?[[-1,-1],[-1,1]]:[[1,-1],[1,1]];
+}
+function getMoves(board,r,c,capturesOnly=false){
+ const p=board[r][c];if(!p)return [];
+ let result=[];
+ for(const [dr,dc] of directions(p)){
+  let nr=r+dr,nc=c+dc;
+  if(!inside(nr,nc))continue;
+  if(!board[nr][nc]&&!capturesOnly){
+   result.push({r:nr,c:nc,cap:null});
+  }else if(board[nr][nc]&&board[nr][nc].p!==p.p){
+   let lr=nr+dr,lc=nc+dc;
+   if(inside(lr,lc)&&!board[lr][lc])
+    result.push({r:lr,c:lc,cap:{r:nr,c:nc}});
+  }
+ }
+ return result;
+}
+function allCheckMoves(board,player){
+ let normal=[],captures=[];
+ for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+  if(board[r][c]?.p===player){
+   const m=getMoves(board,r,c);
+   m.forEach(x=>(x.cap?captures:normal).push({from:{r,c},...x}));
+  }
+ }
+ return captures.length?captures:normal;
+}
+function renderCheckers(){
+ let el=document.getElementById("checker-board");
+ el.innerHTML="";
+ for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+  let sq=document.createElement("div");
+  sq.className="square "+((r+c)%2?"dark":"light");
+  if(cSelected?.r===r&&cSelected?.c===c)sq.classList.add("selected");
+  if(cMoves.some(m=>m.r===r&&m.c===c))sq.classList.add("possible");
+  if(cb[r][c]){
+   let piece=document.createElement("div");
+   piece.className="piece "+(cb[r][c].p==="r"?"red":"black")+(cb[r][c].k?" king":"");
+   sq.appendChild(piece);
+  }
+  sq.onclick=()=>checkClick(r,c);
+  el.appendChild(sq);
+ }
+}
+function checkClick(r,c){
+ if(cOver|| (document.getElementById("check-mode").value==="bot"&&cTurn==="b"))return;
+ const piece=cb[r][c];
+ if(cSelected){
+  let move=cMoves.find(m=>m.r===r&&m.c===c);
+  if(move){applyCheckMove(cSelected,move);return;}
+ }
+ if(piece?.p===cTurn){
+  const all=allCheckMoves(cb,cTurn);
+  if(all.length&&all[0].cap){
+   cMoves=all.filter(m=>m.from.r===r&&m.from.c===c);
+  }else cMoves=getMoves(cb,r,c);
+  cSelected={r,c};
+ }else{
+  cSelected=null;cMoves=[];
+ }
+ renderCheckers();
+}
+function applyCheckMove(from,move){
+ let piece=cb[from.r][from.c];
+ cb[move.r][move.c]=piece;
+ cb[from.r][from.c]=null;
+ if(move.cap)cb[move.cap.r][move.cap.c]=null;
+ if((piece.p==="r"&&move.r===0)||(piece.p==="b"&&move.r===7))
+  piece.k=true;
+ if(move.cap){
+  const further=getMoves(cb,move.r,move.c,true);
+  if(further.length){
+   cSelected={r:move.r,c:move.c};cMoves=further;
+   renderCheckers();return;
+  }
+ }
+ cSelected=null;cMoves=[];
+ cTurn=cTurn==="r"?"b":"r";
+ finishCheckers();
+ if(!cOver&&document.getElementById("check-mode").value==="bot"&&cTurn==="b"){
+  updateCheckStatus();
+  setTimeout(botCheckers,450);
+ }
+ renderCheckers();updateCheckStatus();
+}
+function finishCheckers(){
+ let red=0,black=0;
+ cb.flat().forEach(p=>{if(p?.p==="r")red++;if(p?.p==="b")black++;});
+ if(!red||!black||!allCheckMoves(cb,cTurn).length){
+  cOver=true;
+  let winner=!red?"b":!black?"r":cTurn==="r"?"b":"r";
+  document.getElementById("check-status").textContent=
+   winner==="r"?tr("redwin"):tr("blackwin");
+ }
+}
+function updateCheckStatus(){
+ if(cOver)return;
+ let mode=document.getElementById("check-mode").value;
+ document.getElementById("check-status").textContent=
+  cTurn==="r"?tr("redturn"):
+  mode==="bot"?tr("botturn"):tr("blackturn");
+}
+function copyBoard(board){
+ return board.map(row=>row.map(p=>p?{...p}:null));
+}
+function botCheckers(){
+ if(cOver||cTurn!=="b")return;
+ let moves=allCheckMoves(cb,"b");
+ if(!moves.length){finishCheckers();return;}
+ let level=document.getElementById("check-level").value;
+ let move;
+ if(level==="easy"){
+  move=moves[Math.floor(Math.random()*moves.length)];
+ }else if(level==="normal"){
+  move=moves.reduce((best,m)=>{
+   let score=(m.cap?5:0)+(cb[m.from.r][m.from.c].k?1:0);
+   return !best||score>best.score?{m,score}:best;
+  },null).m;
+ }else{
+  // Hard: score captures, promotion and king safety.
+  let best=-Infinity;
+  for(const m of moves){
+   let b=copyBoard(cb);
+   let p=b[m.from.r][m.from.c];
+   b[m.r][m.c]=p;b[m.from.r][m.from.c]=null;
+   if(m.cap)b[m.cap.r][m.cap.c]=null;
+   if(m.r===7)p.k=true;
+   let score=(m.cap?12:0)+(p.k?3:0)+(m.r===7?8:0);
+   const next=allCheckMoves(b,"r");
+   for(const reply of next){
+    if(reply.cap&&reply.cap.r===m.r&&reply.cap.c===m.c)score-=14;
+   }
+   score+=Math.random()*0.4;
+   if(score>best){best=score;move=m;}
+  }
+ }
+ applyCheckMove(move.from,move);
+}
+
+// ================= ROCK PAPER SCISSORS =================
+
+let rpsScores={p:0,b:0};
+const hands={
+ rock:{emoji:"✊",beats:"scissors"},
+ paper:{emoji:"✋",beats:"rock"},
+ scissors:{emoji:"✌️",beats:"paper"}
+};
+let playerHistory=[];
+function resetRPS(){
+ rpsScores={p:0,b:0};playerHistory=[];
+ document.getElementById("rps-player").textContent="❔";
+ document.getElementById("rps-bot").textContent="❔";
+ document.getElementById("rps-player-score").textContent=0;
+ document.getElementById("rps-bot-score").textContent=0;
+ document.getElementById("rps-status").textContent=tr("choosehand");
+}
+function playRPS(player){
+ let level=document.getElementById("rps-level").value;
+ let choices=Object.keys(hands);
+ let bot;
+ if(level==="easy"||playerHistory.length===0){
+  bot=choices[Math.floor(Math.random()*3)];
+ }else{
+  // Normal mode predicts the most frequent previous choice.
+  let counts={rock:0,paper:0,scissors:0};
+  playerHistory.forEach(x=>counts[x]++);
+  let predicted=choices.sort((a,b)=>counts[b]-counts[a])[0];
+  bot=Object.keys(hands).find(x=>hands[x].beats===predicted);
+  if(Math.random()<0.2)bot=choices[Math.floor(Math.random()*3)];
+ }
+ playerHistory.push(player);
+ document.getElementById("rps-player").textContent=hands[player].emoji;
+ document.getElementById("rps-bot").textContent=hands[bot].emoji;
+ let result;
+ if(player===bot)result="tie";
+ else if(hands[player].beats===bot)result="win";
+ else result="lose";
+ if(result==="win")rpsScores.p++;
+ if(result==="lose")rpsScores.b++;
+ document.getElementById("rps-player-score").textContent=rpsScores.p;
+ document.getElementById("rps-bot-score").textContent=rpsScores.b;
+ document.getElementById("rps-status").textContent=tr(result);
+}
+
+// ================= REFRESH TEXT =================
+
+function updateStatuses(){
+ if(currentGame==="ttt")updateTTTStatus();
+ if(currentGame==="checkers")updateCheckStatus();
+ if(currentGame==="rps"&&
+ document.getElementById("rps-player").textContent==="❔")
+ document.getElementById("rps-status").textContent=tr("choosehand");
+}
+resetTTT();
+resetCheckers();
+resetRPS();
+</script>
+</body>
+</html>
